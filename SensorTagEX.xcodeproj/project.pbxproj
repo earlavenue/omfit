@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		28D7EEB918ED204B00DA7A9A /* CBPeripheral+Omron.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7EEB818ED204B00DA7A9A /* CBPeripheral+Omron.m */; };
 		7F43391816D3ABAF006FE682 /* accelerometer.png in Resources */ = {isa = PBXBuildFile; fileRef = 7F43390D16D3ABAF006FE682 /* accelerometer.png */; };
 		7F43391916D3ABAF006FE682 /* barometer.png in Resources */ = {isa = PBXBuildFile; fileRef = 7F43390E16D3ABAF006FE682 /* barometer.png */; };
 		7F43391A16D3ABAF006FE682 /* gyroscope.png in Resources */ = {isa = PBXBuildFile; fileRef = 7F43390F16D3ABAF006FE682 /* gyroscope.png */; };
@@ -38,6 +39,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		28D7EEB718ED204B00DA7A9A /* CBPeripheral+Omron.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CBPeripheral+Omron.h"; sourceTree = "<group>"; };
+		28D7EEB818ED204B00DA7A9A /* CBPeripheral+Omron.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CBPeripheral+Omron.m"; sourceTree = "<group>"; };
 		7F43390D16D3ABAF006FE682 /* accelerometer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = accelerometer.png; sourceTree = "<group>"; };
 		7F43390E16D3ABAF006FE682 /* barometer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = barometer.png; sourceTree = "<group>"; };
 		7F43390F16D3ABAF006FE682 /* gyroscope.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gyroscope.png; sourceTree = "<group>"; };
@@ -152,21 +155,23 @@
 		7FF608F01654FBE1004F4562 /* SensorTagEX */ = {
 			isa = PBXGroup;
 			children = (
-				7F43390C16D3ABAF006FE682 /* Images */,
-				7FF609131654FC5D004F4562 /* Sensors.h */,
-				7FF609141654FC5D004F4562 /* Sensors.m */,
-				7FF609151654FC5D004F4562 /* SensorTagApplicationViewController.h */,
-				7FF609161654FC5D004F4562 /* SensorTagApplicationViewController.m */,
-				7FF6090D1654FC50004F4562 /* deviceCellTemplate.h */,
-				7FF6090E1654FC50004F4562 /* deviceCellTemplate.m */,
-				7FF6090F1654FC50004F4562 /* deviceSelector.h */,
-				7FF609101654FC50004F4562 /* deviceSelector.m */,
+				7FF608F91654FBE1004F4562 /* AppDelegate.h */,
+				7FF608FA1654FBE1004F4562 /* AppDelegate.m */,
 				7FF609071654FC3E004F4562 /* BLEDevice.h */,
 				7FF609081654FC3E004F4562 /* BLEDevice.m */,
 				7FF609091654FC3E004F4562 /* BLEUtility.h */,
 				7FF6090A1654FC3E004F4562 /* BLEUtility.m */,
-				7FF608F91654FBE1004F4562 /* AppDelegate.h */,
-				7FF608FA1654FBE1004F4562 /* AppDelegate.m */,
+				7FF6090D1654FC50004F4562 /* deviceCellTemplate.h */,
+				7FF6090E1654FC50004F4562 /* deviceCellTemplate.m */,
+				7FF6090F1654FC50004F4562 /* deviceSelector.h */,
+				7FF609101654FC50004F4562 /* deviceSelector.m */,
+				7FF609131654FC5D004F4562 /* Sensors.h */,
+				7FF609141654FC5D004F4562 /* Sensors.m */,
+				7FF609151654FC5D004F4562 /* SensorTagApplicationViewController.h */,
+				7FF609161654FC5D004F4562 /* SensorTagApplicationViewController.m */,
+				28D7EEB718ED204B00DA7A9A /* CBPeripheral+Omron.h */,
+				28D7EEB818ED204B00DA7A9A /* CBPeripheral+Omron.m */,
+				7F43390C16D3ABAF006FE682 /* Images */,
 				7FF608F11654FBE1004F4562 /* Supporting Files */,
 			);
 			path = SensorTagEX;
@@ -267,6 +272,7 @@
 				7FF6090B1654FC3E004F4562 /* BLEDevice.m in Sources */,
 				7FF6090C1654FC3E004F4562 /* BLEUtility.m in Sources */,
 				7FF609111654FC50004F4562 /* deviceCellTemplate.m in Sources */,
+				28D7EEB918ED204B00DA7A9A /* CBPeripheral+Omron.m in Sources */,
 				7FF609121654FC50004F4562 /* deviceSelector.m in Sources */,
 				7FF609171654FC5D004F4562 /* Sensors.m in Sources */,
 				7FF609181654FC5D004F4562 /* SensorTagApplicationViewController.m in Sources */,

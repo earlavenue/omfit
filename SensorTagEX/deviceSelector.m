@@ -7,6 +7,7 @@
  */
 
 #import "deviceSelector.h"
+#import "CBPeripheral+Omron.h"
 
 @interface deviceSelector ()
 
@@ -72,11 +73,11 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:[NSString stringWithFormat:@"%d_Cell",indexPath.row]];
+    UITableViewCell *cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:[NSString stringWithFormat:@"%ld_Cell",(long)indexPath.row]];
     CBPeripheral *p = [self.sensorTags objectAtIndex:indexPath.row];
     
-    cell.textLabel.text = [NSString stringWithFormat:@"%@",p.name];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",CFUUIDCreateString(nil, p.UUID)];
+    cell.textLabel.text = [NSString stringWithFormat:@"%@",p.displayName];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"(UUID: %@)",CFUUIDCreateString(nil, p.UUID)];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     return cell;
@@ -85,15 +86,15 @@
 -(NSString *) tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == 0) {
         if (self.sensorTags.count > 1 )
-            return [NSString stringWithFormat:@"%d SensorTags Found",self.sensorTags.count];
+            return [NSString stringWithFormat:@"%lu BLE Devices Found",(unsigned long)self.sensorTags.count];
         else
-            return [NSString stringWithFormat:@"%d SensorTag Found",self.sensorTags.count];
+            return [NSString stringWithFormat:@"%lu BLE Device Found",(unsigned long)self.sensorTags.count];
     }
     
     return @"";
 }
 
--(float) tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+-(CGFloat) tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
     return 150.0f;
 }
 
@@ -122,7 +123,7 @@
 
 -(void)centralManagerDidUpdateState:(CBCentralManager *)central {
     if (central.state != CBCentralManagerStatePoweredOn) {
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"BLE not supported !" message:[NSString stringWithFormat:@"CoreBluetooth return state: %d",central.state] delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"BLE not supported !" message:[NSString stringWithFormat:@"CoreBluetooth return state: %ld",central.state] delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alertView show];
     }
     else {
@@ -158,21 +159,21 @@
 
 -(void) peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
     BOOL replace = NO;
-    BOOL found = NO;
-    NSLog(@"Services scanned !");
-    [self.m cancelPeripheralConnection:peripheral];
-    for (CBService *s in peripheral.services) {
-        NSLog(@"Service found : %@",s.UUID);
-        if ([s.UUID isEqual:[CBUUID UUIDWithString:@"F000AA00-0451-4000-B000-000000000000"]])  {
-            NSLog(@"This is a SensorTag !");
-            found = YES;
-        }
-        if ([s.UUID isEqual:[CBUUID UUIDWithString:@"ECBE3980-C9A2-11E1-B1BD-0002A5D5C51B"]])  {
-            NSLog(@"This is OMRON !");
-            found = YES;
-        }
-    }
-    if (found) {
+//    BOOL found = NO;
+//    NSLog(@"Services scanned !");
+//    [self.m cancelPeripheralConnection:peripheral];
+//    for (CBService *s in peripheral.services) {
+//        NSLog(@"Service found : %@",s.UUID);
+//        if ([s.UUID isEqual:[CBUUID UUIDWithString:@"F000AA00-0451-4000-B000-000000000000"]])  {
+//            NSLog(@"This is a SensorTag !");
+//            found = YES;
+//        }
+//        if ([s.UUID isEqual:[CBUUID UUIDWithString:@"ECBE3980-C9A2-11E1-B1BD-0002A5D5C51B"]])  {
+//            NSLog(@"This is OMRON !");
+//            found = YES;
+//        }
+//    }
+//    if (found) {
         // Match if we have this device from before
         for (int ii=0; ii < self.sensorTags.count; ii++) {
             CBPeripheral *p = [self.sensorTags objectAtIndex:ii];
@@ -183,9 +184,9 @@
             }
         if (!replace) {
             [self.sensorTags addObject:peripheral];
-            [self.tableView reloadData];
         }
-    }
+//    }
+    [self.tableView reloadData];
 }
 
 -(void) peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
@@ -207,15 +208,13 @@
     [d setValue:@"1" forKey:@"IR temperature active"];
     // Append the UUID to make it easy for app
     [d setValue:@"F000AA00-0451-4000-B000-000000000000"  forKey:@"IR temperature service UUID"];
-//        [d setValue:@"IR temperature service UUID"  forKey:@"F000AA00-0451-4000-B000-000000000000"];
     [d setValue:@"F000AA01-0451-4000-B000-000000000000"  forKey:@"IR temperature data UUID"];
-//        [d setValue:@"IR temperature data UUID"  forKey:@"F000AA01-0451-4000-B000-000000000000"];
+        [d setValue:@"IR temperature data UUID"  forKey:@"F000AA01-0451-4000-B000-000000000000"];
     [d setValue:@"F000AA02-0451-4000-B000-000000000000"  forKey:@"IR temperature config UUID"];
     // Then we setup the accelerometer
     [d setValue:@"1" forKey:@"Accelerometer active"];
     [d setValue:@"500" forKey:@"Accelerometer period"];
     [d setValue:@"F000AA10-0451-4000-B000-000000000000"  forKey:@"Accelerometer service UUID"];
-//        [d setValue:@"Accelerometer service UUID"  forKey:@"F000AA10-0451-4000-B000-000000000000"];
     [d setValue:@"F000AA11-0451-4000-B000-000000000000"  forKey:@"Accelerometer data UUID"];
     [d setValue:@"F000AA12-0451-4000-B000-000000000000"  forKey:@"Accelerometer config UUID"];
     [d setValue:@"F000AA13-0451-4000-B000-000000000000"  forKey:@"Accelerometer period UUID"];
@@ -267,7 +266,7 @@
     [d setValue:@"560F1420-AEE8-11E1-8184-0002A5D5C51B" forKey:@"OMRON_WLBLOCKCOMIN04"];
     
     [d setValue:@"B305B680-AEE7-11E1-A730-0002A5D5C51B" forKey:@"OMRON_WLSYSTEM_VALUE"];
-//        [d setValue:@"OMRON_WLSYSTEM_VALUE" forKey:@"B305B680-AEE7-11E1-A730-0002A5D5C51B"]; // for reverse lookup? tj
+        [d setValue:@"OMRON_WLSYSTEM_VALUE" forKey:@"B305B680-AEE7-11E1-A730-0002A5D5C51B"]; // for reverse lookup? tj
 //    [d setValue:@"ECBE3980-C9A2-11E1-B1BD-0002A5D5C51B" forKey:@"OMRON_WLB_SERVICE"];
     [d setValue:@"09FCF88E-E5F4-45CB-B436-06131BBD51ED" forKey:@"TEST_SERVICE"];
     [d setValue:@"23AB78DA-982C-49A0-9734-06BB749D0F96" forKey:@"TEST_SERIAL_SPEED"];

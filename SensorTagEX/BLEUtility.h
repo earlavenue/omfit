@@ -29,5 +29,4 @@
 /// Function to convert an CBUUID to NSString
 +(NSString *) CBUUIDToString:(CBUUID *)inUUID;
 
-
 @end

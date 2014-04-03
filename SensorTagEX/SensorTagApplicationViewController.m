@@ -7,6 +7,7 @@
  */
 
 #import "SensorTagApplicationViewController.h"
+#import "CBPeripheral+Omron.h"
 
 @interface SensorTagApplicationViewController ()
 
@@ -107,8 +108,10 @@
     }
     else {
         self.d.p.delegate = self;
+        [self.d.p discoverServices:nil];
         [self configureSensorTag];
-        self.title = @"TI BLE Sensor Tag application";
+        //        self.title = @"TI BLE Sensor Tag application";
+        self.title = [self.d.p displayName];
     }
 }
 
@@ -262,19 +265,12 @@
 
     if ([self sensorEnabled:@"OMRON active"]) {
         // Test OMRON sensor
-//        CBUUID *sUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Device Information Service"]];
-//        CBUUID *sUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Device Information Service"]];
-        CBUUID *sUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Generic Access Service"]];
-//        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Model Number String"]];
-        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Device Name String"]];
+        CBUUID *sUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Device Information Service"]];
+        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Model Number String"]];
 
         [BLEUtility readCharacteristic:self.d.p sCBUUID:sUUID cCBUUID:cUUID];
-        NSLog(@"configureOmronTag 1: \n\tsUUID: %@/%@ \n\tcUUID: %@/%@\n\n", sUUID, [self findKeyforValue:sUUID], cUUID, [self findKeyforValue:cUUID]);
+        NSLog(@"configureOmronTag: sUUID: %@ cUUID: %@\n\n", sUUID, cUUID);
 
-        uint8_t data = 5;
-        [BLEUtility writeCharacteristic:self.d.p sCBUUID:sUUID cCBUUID:cUUID data:[NSData dataWithBytes:&data length:4]];
-
-        [BLEUtility setNotificationForCharacteristic:self.d.p sCBUUID:sUUID cCBUUID:cUUID enable:YES];
     }
     
     if ([self sensorEnabled:@"OMRON active"]) {
@@ -283,14 +279,14 @@
         CBUUID *sUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Omron WLB Service"]];
 
 //        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Device Name String"]];
-//        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"External Appearance"]];
-//        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Peripheral Privacy Flag"]];
+// ?        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"External Appearance"]];
+// ?        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Peripheral Privacy Flag"]];
 //
 //        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Reconnection Address"]];
 //        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Peripheral Preferred Connection Parameters"]];
 //        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Service Changed"]];
 
-        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Omron wlsystemValueUUID"]];
+                CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Omron wlsystemValueUUID"]];
         //        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Omron wlblockcomout01UUID"]];
         //        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Omron wlblockcomout02UUID"]];
         //        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Omron wlblockcomout03UUID"]];
@@ -302,7 +298,7 @@
         //        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Omron wlblockcomin04UUID"]];
         //        CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Omron wlstreamcomValueUUID"]];
 
-        NSLog(@"configureOmronTag 2: \n\tsUUID: %@/%@ \n\tcUUID: %@/%@\n\n", sUUID, [self findKeyforValue:sUUID], cUUID, [self findKeyforValue:cUUID]);
+        NSLog(@"configureOmronTag: sUUID: %@ cUUID: %@", sUUID, cUUID);
 
         uint8_t data = 5;
         [BLEUtility writeCharacteristic:self.d.p sCBUUID:sUUID cCBUUID:cUUID data:[NSData dataWithBytes:&data length:4]];
@@ -313,16 +309,7 @@
             [BLEUtility setNotificationForCharacteristic:self.d.p sCBUUID:sUUID cCBUUID:cUUID enable:YES];
         cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Omron wlblockcomin02UUID"]];
             [BLEUtility setNotificationForCharacteristic:self.d.p sCBUUID:sUUID cCBUUID:cUUID enable:YES];
-        cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Omron wlblockcomin03UUID"]];
-            [BLEUtility setNotificationForCharacteristic:self.d.p sCBUUID:sUUID cCBUUID:cUUID enable:YES];
-        cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Omron wlblockcomin04UUID"]];
-            [BLEUtility setNotificationForCharacteristic:self.d.p sCBUUID:sUUID cCBUUID:cUUID enable:YES];
 
-        for ( CBService *service in self.d.p.services ) {
-            NSLog(@">>> service.characteristics %@\n", service.characteristics);
-            }
-
-        
 /*
         cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Omron wlblockcomout01UUID"]];
         [BLEUtility setNotificationForCharacteristic:self.d.p sCBUUID:sUUID cCBUUID:cUUID enable:YES];
@@ -349,7 +336,6 @@
         if ([self sensorEnabled:@"OMRON active"])
             [self.sensorsEnabled addObject:@"OMRON"];
     }
-    NSLog(@"configureOmronTag DONE\n\n\n\n");
 }
 
 
@@ -361,21 +347,17 @@
         CBUUID *sUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"IR temperature service UUID"]];
         CBUUID *cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"IR temperature config UUID"]];
  
-        NSLog(@"configureSensorTag: (temperature)\n\tsUUID: %@/%@ \n\tcUUID: %@/%@\n\n", sUUID, [self findKeyforValue:sUUID], cUUID, [self findKeyforValue:cUUID]);
+        NSLog(@"configureSensorTag (temperature): sUUID: %@ cUUID: %@", sUUID, cUUID);
 
         uint8_t data = 0x01;
         [BLEUtility writeCharacteristic:self.d.p sCBUUID:sUUID cCBUUID:cUUID data:[NSData dataWithBytes:&data length:1]];
         cUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"IR temperature data UUID"]];
-        NSLog(@"configureSensorTag 2: cUUID: %@/%@", cUUID, [self findKeyforValue:cUUID]);
+        NSLog(@"sensortag(more): cUUID: %@", cUUID);
         [BLEUtility setNotificationForCharacteristic:self.d.p sCBUUID:sUUID cCBUUID:cUUID enable:YES];
         
         if ([self sensorEnabled:@"Ambient temperature active"]) [self.sensorsEnabled addObject:@"Ambient temperature"];
         if ([self sensorEnabled:@"IR temperature active"]) [self.sensorsEnabled addObject:@"IR temperature"];
        
-    }
-
-    for ( CBService *service in self.d.p.services ) {
-        NSLog(@">>> service.characteristics %@\n", service.characteristics);
     }
     
     
@@ -385,8 +367,7 @@
         CBUUID *pUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Accelerometer period UUID"]];
         NSInteger period = [[self.d.setupData valueForKey:@"Accelerometer period"] integerValue];
         uint8_t periodData = (uint8_t)(period / 10);
-       
-        NSLog(@"Accelerometer periodData %d",periodData);
+        NSLog(@"Accelerometer %d",periodData);
         [BLEUtility writeCharacteristic:self.d.p sCBUUID:sUUID cCBUUID:pUUID data:[NSData dataWithBytes:&periodData length:1]];
         uint8_t data = 0x01;
         [BLEUtility writeCharacteristic:self.d.p sCBUUID:sUUID cCBUUID:cUUID data:[NSData dataWithBytes:&data length:1]];
@@ -394,6 +375,10 @@
         [BLEUtility setNotificationForCharacteristic:self.d.p sCBUUID:sUUID cCBUUID:cUUID enable:YES];
         [self.sensorsEnabled addObject:@"Accelerometer"];
      }
+/*     */
+    
+    
+    
     
     if ([self sensorEnabled:@"Humidity active"]) {
         CBUUID *sUUID = [CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Humidity service UUID"]];
@@ -442,8 +427,7 @@
         [BLEUtility setNotificationForCharacteristic:self.d.p sCBUUID:sUUID cCBUUID:cUUID enable:YES];
         [self.sensorsEnabled addObject:@"Magnetometer"];
     }
-    NSLog(@"configureSensorTag DONE\n\n\n\n");
-
+    
 }
 
 -(void) deconfigureSensorTag {
@@ -511,7 +495,7 @@
 
 -(int)sensorPeriod:(NSString *)Sensor {
     NSString *val = [self.d.setupData valueForKey:Sensor];
-    return [val integerValue];
+    return [val intValue];
 }
 
 
@@ -531,37 +515,32 @@
 #pragma mark - CBperipheral delegate functions
 
 -(void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error {
-    NSLog(@"didDiscoverCharacteristicsForService .. %@ {%@}", service, [self findKeyforValue:service.UUID]);
-    if ([service.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Gyroscope service UUID"]]]) {
-        [self configureSensorTag];
-    }
-    else if ([service.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Omron WLB Service"]]]) {
-        [self configureOmronTag];
-    }
-    else {
-        NSLog(@"didDiscoverCharacteristicsForService (Unknown UUID for BLE device) %@ (aka %@)", service, [self findKeyforValue:service.UUID]);
-    }
+    NSLog(@"didDiscoverCharacteristicsForService .. %@", service);
+    [self.tableView reloadData];
 }
 
 -(void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
+    NSLog(@".");
     int cnts=0;
-    for (CBService *s in peripheral.services) {
-        [peripheral discoverCharacteristics:nil forService:s];
-//        NSLog(@"didDiscoverServices %d\n\t%@\n\t(%@)\n\t((%@))\n\t<%@>", ++cnts, s, s.UUID,
-//              peripheral.identifier, [NSString stringWithFormat:@"%@", s.UUID]);
-//        NSLog(@"didDiscoverServices %d %@ -> %@", cnts, s.UUID, [self.d.setupData valueForKey:[NSString stringWithFormat:@"%@", s.UUID]]);
-        NSLog(@"didDiscoverServices Discovered: %@ (%@)!!!", s.UUID, [self findKeyforValue:s.UUID]);
-        
+    for (CBService *service in peripheral.services) {
+        if ([service.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Gyroscope service UUID"]]]) {
+            [self configureSensorTag];
+        }
+        if ([service.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Omron WLB Service"]]]) {
+            [self configureOmronTag];
+        }
+        [peripheral discoverCharacteristics:nil forService:service];
+        NSLog(@"didDiscoverServices %d %@", ++cnts, service);
     }
+    [self.tableView reloadData];
 }
 
-
 -(void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    NSLog(@"didUpdateNotificationStateForCharacteristic> %@/%@ error = %@",characteristic.UUID, [self findKeyforValue:characteristic.UUID], error);
+    NSLog(@"didUpdateNotificationStateForCharacteristic> %@, error = %@ ..",characteristic.UUID, error);
 }
 
 -(void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    NSLog(@"didUpdateValueForCharacteristic = %@/%@ error: %@ value: %@", characteristic.UUID, [self findKeyforValue:characteristic.UUID], error, characteristic.value);
+    NSLog(@"didUpdateValueForCharacteristic = %@ error: %@",characteristic.UUID, error);
     
     
     if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"IR temperature data UUID"]]]) {
@@ -582,7 +561,7 @@
     }
     
     
-    else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Accelerometer data UUID"]]]) {
+    if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Accelerometer data UUID"]]]) {
         float x = [sensorKXTJ9 calcXValue:characteristic.value];
         float y = [sensorKXTJ9 calcYValue:characteristic.value];
         float z = [sensorKXTJ9 calcZValue:characteristic.value];
@@ -605,7 +584,7 @@
         
     }
     
-    else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Humidity data UUID"]]]) {
+    if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Humidity data UUID"]]]) {
 
         float rHVal = [sensorSHT21 calcPress:characteristic.value];
         self.rH.temperature.text = [NSString stringWithFormat:@"%0.1f%%rH",rHVal];
@@ -616,7 +595,7 @@
         
     }
     
-    else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Magnetometer data UUID"]]]) {
+    if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Magnetometer data UUID"]]]) {
         
         float x = [self.magSensor calcXValue:characteristic.value];
         float y = [self.magSensor calcYValue:characteristic.value];
@@ -640,7 +619,7 @@
         
     }
     
-    else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Barometer calibration UUID"]]]) {
+    if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Barometer calibration UUID"]]]) {
         
         self.baroSensor = [[sensorC953A alloc] initWithCalibrationData:characteristic.value];
         
@@ -652,7 +631,7 @@
         
     }
     
-    else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Barometer data UUID"]]]) {
+    if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Barometer data UUID"]]]) {
         int pressure = [self.baroSensor calcPressure:characteristic.value];
         self.baro.temperature.text = [NSString stringWithFormat:@"%d mBar",pressure];
         self.baro.temperatureGraph.progress = ((float)((float)pressure - (float)800) / (float)400);
@@ -662,7 +641,7 @@
         
     }
     
-    else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Gyroscope data UUID"]]]) {
+    if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:[self.d.setupData valueForKey:@"Gyroscope data UUID"]]]) {
         
         float x = [self.gyroSensor calcXValue:characteristic.value];
         float y = [self.gyroSensor calcYValue:characteristic.value];
@@ -684,10 +663,7 @@
         self.currentVal.gyroY = y;
         self.currentVal.gyroZ = z;
         
-    } else {
-        NSLog(@"didUpdateValueForCharacteristic UNKNOWN = %@ error: %@",characteristic.UUID, error);
     }
-
     [self.tableView reloadData];
 }
 
@@ -825,18 +801,4 @@
         }
     }
 }
-
-// Return key for value
--(NSString *) findKeyforValue:value {
-    NSString *val = [NSString stringWithFormat:@"%@", value];
-    for ( NSString *k in self.d.setupData ) {
-        if( [val isEqual:[self.d.setupData valueForKey:k]] ) {
-            return k;
-        }
-    }
-    return [NSString stringWithFormat:@"Unknown UUID for: [%@]", value];
-
-}
-
-
 @end

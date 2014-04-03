@@ -12,7 +12,6 @@
 
 +(void)writeCharacteristic:(CBPeripheral *)peripheral sUUID:(NSString *)sUUID cUUID:(NSString *)cUUID data:(NSData *)data {
     // Sends data to BLE peripheral to process HID and send EHIF command to PC
-    NSLog(@"writeCharacteristic....");
     for ( CBService *service in peripheral.services ) {
         if ([service.UUID isEqual:[CBUUID UUIDWithString:sUUID]]) {
             for ( CBCharacteristic *characteristic in service.characteristics ) {
@@ -30,7 +29,7 @@
     // Sends data to BLE peripheral to process HID and send EHIF command to PC
     int foundsomehting = 0, cnts = 0;
     for ( CBService *service in peripheral.services ) {
-        NSLog(@"writeCharacteristic FIND sCBUUID %@ then cCBUUID %@\n IN service.characteristics %@\n", sCBUUID, cCBUUID, service.characteristics);
+//        NSLog(@"writeCharacteristic service.characteristics %@\nsCBUUID %@\nservice.UUID %@", service.characteristics, sCBUUID, service.UUID);
         if ([service.UUID isEqual:sCBUUID]) {
             for ( CBCharacteristic *characteristic in service.characteristics ) {
                 cnts++;
@@ -51,7 +50,6 @@
 }
 
 
-
 +(void)readCharacteristic:(CBPeripheral *)peripheral sUUID:(NSString *)sUUID cUUID:(NSString *)cUUID {
     for ( CBService *service in peripheral.services ) {
         if([service.UUID isEqual:[CBUUID UUIDWithString:sUUID]]) {
@@ -67,16 +65,13 @@
 }
 
 +(void)readCharacteristic:(CBPeripheral *)peripheral sCBUUID:(CBUUID *)sCBUUID cCBUUID:(CBUUID *)cCBUUID {
-    NSLog(@"readCharacteristic: searching for...\n\t%@\n\t%@\nin %@\n\n", sCBUUID, cCBUUID, peripheral);
     for ( CBService *service in peripheral.services ) {
-        NSLog(@"readCharacteristic: is... %@ == %@ ?\nservice.characteristics: %@\n", service.UUID, cCBUUID, service.characteristics);
         if([service.UUID isEqual:sCBUUID]) {
             for ( CBCharacteristic *characteristic in service.characteristics ) {
-                NSLog(@"readCharacteristic: and is... %@ == %@ ?", characteristic.UUID, cCBUUID);
                 if ([characteristic.UUID isEqual:cCBUUID]) {
                     /* Everything is found, read characteristic ! */
                     [peripheral readValueForCharacteristic:characteristic];
-                    NSLog(@"readCharacteristic: found\n\t%@\n\t%@\n", service.UUID, characteristic.UUID);
+                    NSLog(@"readCharacteristic: \n\t%@\n\t%@\n", service.UUID, characteristic.UUID);
                 }
             }
         }
@@ -84,7 +79,6 @@
 }
 
 +(void)setNotificationForCharacteristic:(CBPeripheral *)peripheral sUUID:(NSString *)sUUID cUUID:(NSString *)cUUID enable:(BOOL)enable {
-    NSLog(@"setNotificationForCharacteristic: searching for...\n\t%@\n\t%@\nin %@", sUUID, cUUID, peripheral);
     for ( CBService *service in peripheral.services ) {
         NSLog(@"setNotificationForCharacteristic: %@/+/%@/%@\n", service.UUID, sUUID, cUUID);
         if ([service.UUID isEqual:[CBUUID UUIDWithString:sUUID]]) {
@@ -100,14 +94,12 @@
 }
 
 +(void)setNotificationForCharacteristic:(CBPeripheral *)peripheral sCBUUID:(CBUUID *)sCBUUID cCBUUID:(CBUUID *)cCBUUID enable:(BOOL)enable {
-    NSLog(@"setNotificationForCharacteristic:: searching for...\n\t%@\n\t%@\nin %@", sCBUUID, cCBUUID, peripheral);
     for ( CBService *service in peripheral.services ) {
         if ([service.UUID isEqual:sCBUUID]) {
-            NSLog(@"setNotificationForCharacteristic:: %@ in \n%@", service.UUID, service.characteristics);
+//            NSLog(@"setNotificationForCharacteristic: %@", service.UUID);
             for (CBCharacteristic *characteristic in service.characteristics ) {
                 if ([characteristic.UUID isEqual:cCBUUID]) {
-                    NSLog(@"setNotificationForCharacteristic:: %@ -> %@",
-                        service.UUID, characteristic.UUID);
+                    NSLog(@"setNotificationForCharacteristic: %@ -> %@", service.UUID, characteristic.UUID);
                     /* Everything is found, set notification ! */
                     [peripheral setNotifyValue:enable forCharacteristic:characteristic];
                 }
@@ -162,7 +154,5 @@
     }
     return nil;
 }
-
-
   
 @end
